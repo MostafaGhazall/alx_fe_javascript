@@ -65,14 +65,16 @@ function createAddQuoteForm() {
 // Function to export quotes to a JSON file
 function exportToJsonFile() {
   const dataStr = JSON.stringify(quotes);
-  const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-  const exportFileDefaultName = 'quotes.json';
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
 
   const linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.setAttribute('href', url);
+  linkElement.setAttribute('download', 'quotes.json');
+  document.body.appendChild(linkElement);
   linkElement.click();
+  document.body.removeChild(linkElement);
+  URL.revokeObjectURL(url);
 }
 
 // Function to import quotes from a JSON file
