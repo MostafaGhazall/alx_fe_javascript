@@ -165,14 +165,20 @@ function filterQuotes() {
   }
 }
 
-// Simulate fetching quotes from server
-async function fetchQuotesFromServer() {
+// Function to synchronize local quotes with the server
+async function syncQuotes() {
   try {
+    // Fetch quotes from server
     const response = await fetch(SERVER_URL);
     const serverQuotes = await response.json();
+
+    // Resolve conflicts and update local quotes
     resolveConflicts(serverQuotes);
+
+    // Notify user of synchronization
+    notifyUser('Quotes have been synchronized with the server.');
   } catch (error) {
-    console.error('Error fetching quotes from server:', error);
+    console.error('Error synchronizing quotes with server:', error);
   }
 }
 
@@ -186,7 +192,6 @@ function resolveConflicts(serverQuotes) {
   saveQuotes();
   populateCategories();
   filterQuotes();
-  notifyUser('Quotes have been synchronized with the server.');
 }
 
 // Function to notify the user of updates or conflicts
@@ -216,5 +221,5 @@ if (lastQuote) {
 // Apply the last selected filter on page load
 filterQuotes();
 
-// Periodically fetch quotes from the server
-setInterval(fetchQuotesFromServer, 30000); // Fetch every 30 seconds
+// Periodically fetch and sync quotes with the server
+setInterval(syncQuotes, 30000); // Sync every 30 seconds
