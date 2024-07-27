@@ -95,7 +95,7 @@ function importFromJsonFile(event) {
 }
 
 // Function to populate the category filter dropdown
-function updateCategoryFilter() {
+function populateCategories() {
   const categoryFilter = document.getElementById('categoryFilter');
   const categories = [...new Set(quotes.map(quote => quote.category))];
   
@@ -139,7 +139,7 @@ function filterQuotes() {
 createAddQuoteForm();
 
 // Initialize category filter
-updateCategoryFilter();
+populateCategories();
 
 // Load the last viewed quote from session storage if it exists
 const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
