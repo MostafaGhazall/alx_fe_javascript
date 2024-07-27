@@ -28,17 +28,44 @@ function showRandomQuote() {
 }
 
 // Function to add a new quote
-function addQuote() {
+async function addQuote() {
   const newQuoteText = document.getElementById('newQuoteText').value;
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
   
   if (newQuoteText && newQuoteCategory) {
-    quotes.push({ text: newQuoteText, category: newQuoteCategory });
-    saveQuotes(); // Save to local storage
+    const newQuote = { text: newQuoteText, category: newQuoteCategory };
+
+    // Add quote to local storage
+    quotes.push(newQuote);
+    saveQuotes();
+
+    // Clear input fields
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('New quote added successfully!');
-    updateCategoryFilter(); // Update category filter with new categories
+
+    // Update category filter with new categories
+    updateCategoryFilter();
+
+    // Send new quote to server
+    try {
+      const response = await fetch(SERVER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newQuote)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add quote to server');
+      }
+
+      const serverResponse = await response.json();
+      console.log('Quote added to server:', serverResponse);
+    } catch (error) {
+      console.error('Error adding quote to server:', error);
+    }
   } else {
     alert('Please enter both a quote and a category.');
   }
