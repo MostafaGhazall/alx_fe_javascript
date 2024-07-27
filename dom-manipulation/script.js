@@ -183,7 +183,7 @@ async function syncQuotes() {
     await fetchQuotesFromServer();
 
     // Notify user of synchronization
-    notifyUser('Quotes have been synchronized with the server.');
+    notifyUser('Quotes synced with server!');
   } catch (error) {
     console.error('Error synchronizing quotes with server:', error);
   }
