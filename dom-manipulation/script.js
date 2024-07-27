@@ -165,15 +165,22 @@ function filterQuotes() {
   }
 }
 
+// Function to fetch quotes from server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverQuotes = await response.json();
+    resolveConflicts(serverQuotes);
+  } catch (error) {
+    console.error('Error fetching quotes from server:', error);
+  }
+}
+
 // Function to synchronize local quotes with the server
 async function syncQuotes() {
   try {
     // Fetch quotes from server
-    const response = await fetch(SERVER_URL);
-    const serverQuotes = await response.json();
-
-    // Resolve conflicts and update local quotes
-    resolveConflicts(serverQuotes);
+    await fetchQuotesFromServer();
 
     // Notify user of synchronization
     notifyUser('Quotes have been synchronized with the server.');
