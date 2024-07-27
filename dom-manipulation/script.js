@@ -1,13 +1,19 @@
-// Retrieve quotes from local storage or initialize with default quotes
+// Retrieve quotes and category filter from local storage or initialize with default values
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
   { text: "Do not wait to strike till the iron is hot; but make it hot by striking.", category: "Action" },
   { text: "Great minds discuss ideas; average minds discuss events; small minds discuss people.", category: "Wisdom" }
 ];
+let lastSelectedCategory = localStorage.getItem('lastSelectedCategory') || 'all';
 
 // Save quotes to local storage
 function saveQuotes() {
   localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Save last selected category to local storage
+function saveLastSelectedCategory(category) {
+  localStorage.setItem('lastSelectedCategory', category);
 }
 
 // Function to display a random quote
@@ -29,13 +35,11 @@ function addQuote() {
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('New quote added successfully!');
+    updateCategoryFilter(); // Update category filter with new categories
   } else {
     alert('Please enter both a quote and a category.');
   }
 }
-
-// Event listener for the "Show New Quote" button
-document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 // Function to create and display the add quote form
 function createAddQuoteForm() {
@@ -85,15 +89,63 @@ function importFromJsonFile(event) {
     quotes.push(...importedQuotes);
     saveQuotes();
     alert('Quotes imported successfully!');
+    updateCategoryFilter(); // Update category filter with new categories
   };
   fileReader.readAsText(event.target.files[0]);
 }
 
+// Function to populate the category filter dropdown
+function updateCategoryFilter() {
+  const categoryFilter = document.getElementById('categoryFilter');
+  const categories = [...new Set(quotes.map(quote => quote.category))];
+  
+  // Clear existing options
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
+  // Add new options
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.text = category;
+    categoryFilter.appendChild(option);
+  });
+
+  // Set the last selected category
+  categoryFilter.value = lastSelectedCategory;
+}
+
+// Function to filter quotes based on selected category
+function filterQuotes() {
+  const selectedCategory = document.getElementById('categoryFilter').value;
+  lastSelectedCategory = selectedCategory;
+  saveLastSelectedCategory(selectedCategory);
+
+  const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
+  const quoteDisplay = document.getElementById('quoteDisplay');
+  quoteDisplay.innerHTML = '';
+
+  if (filteredQuotes.length > 0) {
+    filteredQuotes.forEach(quote => {
+      const quoteDiv = document.createElement('div');
+      quoteDiv.innerHTML = `"${quote.text}" - ${quote.category}`;
+      quoteDisplay.appendChild(quoteDiv);
+    });
+  } else {
+    quoteDisplay.innerHTML = 'No quotes available for this category.';
+  }
+}
+
 // Call the function to create the add quote form
 createAddQuoteForm();
+
+// Initialize category filter
+updateCategoryFilter();
 
 // Load the last viewed quote from session storage if it exists
 const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
 if (lastQuote) {
   document.getElementById('quoteDisplay').innerHTML = `"${lastQuote.text}" - ${lastQuote.category}`;
 }
+
+// Apply the last selected filter on page load
+filterQuotes();
