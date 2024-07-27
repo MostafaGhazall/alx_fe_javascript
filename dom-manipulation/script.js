@@ -15,11 +15,36 @@ function showRandomQuote() {
 // Event listener for the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
+// Function to create and display the add quote form
+function createAddQuoteForm() {
+  const formDiv = document.createElement('div');
+
+  const quoteInput = document.createElement('input');
+  quoteInput.setAttribute('id', 'newQuoteText');
+  quoteInput.setAttribute('type', 'text');
+  quoteInput.setAttribute('placeholder', 'Enter a new quote');
+
+  const categoryInput = document.createElement('input');
+  categoryInput.setAttribute('id', 'newQuoteCategory');
+  categoryInput.setAttribute('type', 'text');
+  categoryInput.setAttribute('placeholder', 'Enter quote category');
+
+  const addButton = document.createElement('button');
+  addButton.innerText = 'Add Quote';
+  addButton.onclick = addQuote;
+
+  formDiv.appendChild(quoteInput);
+  formDiv.appendChild(categoryInput);
+  formDiv.appendChild(addButton);
+
+  document.body.appendChild(formDiv);
+}
+
 // Function to add a new quote
 function addQuote() {
   const newQuoteText = document.getElementById('newQuoteText').value;
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
-  
+
   if (newQuoteText && newQuoteCategory) {
     quotes.push({ text: newQuoteText, category: newQuoteCategory });
     document.getElementById('newQuoteText').value = '';
@@ -29,3 +54,6 @@ function addQuote() {
     alert('Please enter both a quote and a category.');
   }
 }
+
+// Call the function to create the add quote form
+createAddQuoteForm();
