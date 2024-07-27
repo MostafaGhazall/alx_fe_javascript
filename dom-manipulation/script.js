@@ -20,7 +20,7 @@ function saveLastSelectedCategory(category) {
 function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex];
-  document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - ${quote.category}`;
+  document.getElementById('quoteDisplay').textContent = `"${quote.text}" - ${quote.category}`;
   sessionStorage.setItem('lastQuote', JSON.stringify(quote)); // Store last viewed quote in session storage
 }
 
@@ -56,7 +56,7 @@ function createAddQuoteForm() {
   categoryInput.setAttribute('placeholder', 'Enter quote category');
 
   const addButton = document.createElement('button');
-  addButton.innerText = 'Add Quote';
+  addButton.textContent = 'Add Quote';
   addButton.onclick = addQuote;
 
   formDiv.appendChild(quoteInput);
@@ -106,7 +106,7 @@ function populateCategories() {
   categories.forEach(category => {
     const option = document.createElement('option');
     option.value = category;
-    option.text = category;
+    option.textContent = category;
     categoryFilter.appendChild(option);
   });
 
@@ -122,16 +122,16 @@ function filterQuotes() {
 
   const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
   const quoteDisplay = document.getElementById('quoteDisplay');
-  quoteDisplay.innerHTML = '';
+  quoteDisplay.textContent = '';
 
   if (filteredQuotes.length > 0) {
     filteredQuotes.forEach(quote => {
       const quoteDiv = document.createElement('div');
-      quoteDiv.innerHTML = `"${quote.text}" - ${quote.category}`;
+      quoteDiv.textContent = `"${quote.text}" - ${quote.category}`;
       quoteDisplay.appendChild(quoteDiv);
     });
   } else {
-    quoteDisplay.innerHTML = 'No quotes available for this category.';
+    quoteDisplay.textContent = 'No quotes available for this category.';
   }
 }
 
@@ -144,7 +144,7 @@ populateCategories();
 // Load the last viewed quote from session storage if it exists
 const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
 if (lastQuote) {
-  document.getElementById('quoteDisplay').innerHTML = `"${lastQuote.text}" - ${lastQuote.category}`;
+  document.getElementById('quoteDisplay').textContent = `"${lastQuote.text}" - ${lastQuote.category}`;
 }
 
 // Apply the last selected filter on page load
