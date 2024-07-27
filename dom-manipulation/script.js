@@ -1,3 +1,6 @@
+// Mock server URL (replace with your server endpoint)
+const SERVER_URL = 'https://jsonplaceholder.typicode.com/posts';
+
 // Retrieve quotes and category filter from local storage or initialize with default values
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
@@ -135,6 +138,42 @@ function filterQuotes() {
   }
 }
 
+// Simulate fetching quotes from server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverQuotes = await response.json();
+    resolveConflicts(serverQuotes);
+  } catch (error) {
+    console.error('Error fetching quotes from server:', error);
+  }
+}
+
+// Function to resolve conflicts between local and server data
+function resolveConflicts(serverQuotes) {
+  const serverQuotesSet = new Set(serverQuotes.map(quote => quote.text));
+  const newLocalQuotes = quotes.filter(quote => !serverQuotesSet.has(quote.text));
+
+  // Update local quotes with server quotes
+  quotes = [...serverQuotes, ...newLocalQuotes];
+  saveQuotes();
+  populateCategories();
+  filterQuotes();
+  notifyUser('Quotes have been synchronized with the server.');
+}
+
+// Function to notify the user of updates or conflicts
+function notifyUser(message) {
+  const notificationsDiv = document.getElementById('notifications');
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notificationsDiv.appendChild(notification);
+
+  setTimeout(() => {
+    notificationsDiv.removeChild(notification);
+  }, 5000);
+}
+
 // Call the function to create the add quote form
 createAddQuoteForm();
 
@@ -149,3 +188,6 @@ if (lastQuote) {
 
 // Apply the last selected filter on page load
 filterQuotes();
+
+// Periodically fetch quotes from the server
+setInterval(fetchQuotesFromServer, 30000); // Fetch every 30 seconds
